@@ -20,6 +20,10 @@ public class BlockControlloer : MonoBehaviour
     [SerializeField]
     private float lowSpace = 1f;
 
+    //生成したブロック格納リスト(配列)
+    private List<GameObject> blockList = new List<GameObject>();
+
+
     //ブロックのプレハブ格納先
     [SerializeField]
     private GameObject blockPrefab;
@@ -40,10 +44,36 @@ public class BlockControlloer : MonoBehaviour
                 var block = Instantiate(blockPrefab, transform).transform;
 
                 //　座標を合わせる
-                block.localPosition = new Vector3(-blockScale.x + blockScale.x * j,
-                                                  -blockScale.y + blockScale.y * i,
-                                                  0f);
+                //block.localPosition = new Vector3(-blockScale.x + blockScale.x * j,
+                //-blockScale.y + blockScale.y * i,
+                //0f);
+
+                block.localPosition = new Vector3(blockScale.x * j,
+                                                   -blockScale.y * i,
+                                                    0f);
+                blockList.Add(block.gameObject);
             }
+        }
+    }
+
+
+    /// <summary>
+    /// リセット処理
+    /// ・消えているブロックの再表示
+    /// </summary>
+
+    public void OnReset()
+    {
+        for (var i = 0; i < blockList.Count; i++)
+        {
+            //オブジェクトのアクティブがオン(true)の時、
+            //continue　以下の処理は行わない
+            if (blockList[i].activeSelf) continue;
+
+            //アクティブをオン(true)にする
+            //　※画面上に再表示
+            blockList[i].SetActive(true);
+
         }
     }
 }
