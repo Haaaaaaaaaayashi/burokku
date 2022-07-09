@@ -10,7 +10,7 @@ public class PlayController : MonoBehaviour
 
     // バー
     [SerializeField]
-    private Rigidbody bar;
+    private Bar bar;
 
     //  ブロックコントローラー
     [SerializeField]
@@ -22,7 +22,7 @@ public class PlayController : MonoBehaviour
 
     // バーの移動量
     [SerializeField]
-    private float barSpeed = 30f;
+    private float barMoveValue;
 
     //発射フラグ
     private bool isShot;
@@ -30,6 +30,16 @@ public class PlayController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //ボールの初期化
+        ball.OnInit(barMoveValue);
+
+        //ボールがリセットされる
+        //エリアに衝突した際に呼ばれる関数を登録
+        ball.TriggerBall += TriggerBall;
+
+        //バーの初期化
+        bar.OnInit();
+
         
     }
 
@@ -46,14 +56,33 @@ public class PlayController : MonoBehaviour
         //Rキーを押した時にリセット
         if (Input.GetKeyDown(KeyCode.R))
         {
-            //ボールのリセット
-            ball.OnReset();
-            //ブロックのリセット
-            blockController.OnReset();
+            ResetGame();
         }
-
+      
         // バーの移動
-        var dir = Input.GetAxis("Horizontal");
-        bar.velocity = dir * Vector3.right * barSpeed;
+        bar.Onmove(barMoveValue);
+    }
+    /// <summary>
+    /// ゲームのリセット
+    /// ・ボールのリセット
+    /// ・ブロックのリセット
+    /// </summary>
+    private void ResetGame()
+    {
+        //ボールを発射できるようにする
+        isShot = false;
+
+        //ボールのリセット
+        ball.OnReset();
+
+        //バーのリセット
+        bar.OnReset();
+
+        // ブロックのリセット
+        blockController.OnReset();
+    }
+    private void TriggerBall()
+    {
+        ResetGame();
     }
 }

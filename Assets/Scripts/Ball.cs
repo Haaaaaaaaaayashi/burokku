@@ -14,6 +14,11 @@ public class Ball : MonoBehaviour
     //最高速度
     private float maxSpeed;
 
+    //ボールがリセットされる
+    //エリアに来た際に呼ばれる関数（デリゲート）
+    public System.Action TriggerBall;
+
+
     /// <summary>
     /// 初期化
     /// ・ボールの初期位置
@@ -23,7 +28,6 @@ public class Ball : MonoBehaviour
     public void OnInit(float speed)
     {
         initPos = transform.localPosition;
-        maxSpeed = speed;
     }
 
     /// <summary>
@@ -37,7 +41,7 @@ public class Ball : MonoBehaviour
         transform.localPosition = initPos;
         body.velocity = Vector3.zero;
     }
-
+    
     /// <summary>
     /// ボールの移動量をセットする
     /// </summary>
@@ -71,6 +75,22 @@ public class Ball : MonoBehaviour
             //オブジェクトをヒエラルキー上から消す
             //編集できない/見えないようにする
             obj.SetActive(false); //コスト低
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        //衝突したオブジェクトを取得
+        var obj = other?.gameObject;
+
+        //衝突したオブジェクトのタグが特定のものであれば、
+        //各自処理をする
+        if(obj != null && obj.tag == "Reset")
+        {
+            //ボールのみをリセット
+            OnReset();
+
+            //この変数に要録された関数を呼び出す
+            TriggerBall?.Invoke();          
         }
     }
 }
